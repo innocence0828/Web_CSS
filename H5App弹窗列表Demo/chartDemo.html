@@ -1,0 +1,307 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<style>
+			body,
+			.mui-content {
+				background-color: #FFF;
+			}
+			
+			label {
+				width: 25%
+			}
+			
+			.layer {
+				width: 100%;
+				height: 100%;
+				position: fixed;
+				z-index: 999;
+				background-color: rgba(10, 10, 10, 0.3);
+				display: none;
+			}
+			
+			.contentBoxView {
+				position: absolute;
+				left: 10%;
+				right: 10%;
+				top: 30%;
+				height: 95%;
+				z-index: 1000;
+				display: block
+			}
+			.cross {
+				width: 20px;
+				height: 20px;
+				background-color: #fff;
+				border-radius: 14px;
+				border: 1px solid #d9d9d9;
+				display: inline-block;
+				position: absolute;
+				top: -10px;
+				right: -10px;
+				color: #FF6461;
+				z-index: 1002
+			}
+			
+			.cross:after {
+				content: "\2715";
+				font-size: 12px;
+				position: relative;
+				left: 4px;
+				bottom: 2px;
+				cursor: pointer;
+			}
+			
+			.popTop{
+				background-color: #FF6461;
+				color:#fff;
+				font-size: 20px;
+				height: 40px;
+				text-align: center;
+				line-height: 40px;
+				background-color: #FF6461;
+				background-image:url('images/gjj.png');
+				background-repeat:no-repeat;
+				background-position:10px 7px;
+				background-size: 30px;
+			}
+			.chart {
+				min-height: 230px;
+				margin: 0px;
+				padding: 0px;
+			}
+			.layer label{
+				width:50%;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">社保查询</h1>
+		</header>
+		<!--弹窗遮罩层-->
+		<div class="layer">
+			<div class="contentBoxView">
+				<div class="cross">
+				</div>
+				<div class="popTop">公积金</div>
+				<div class="row mui-input-group">
+					<div class="mui-input-row">
+						<label> 名称</label>
+						<label> 金额</label>
+					</div>
+					<div class="mui-input-row">
+						<label> 基数</label>
+						<label> 2000</label>
+					</div>
+					<div class="mui-input-row">
+						<label> 单位缴纳</label>
+						<label> 300</label>
+					</div>
+					<div class="mui-input-row">
+						<label> 个人缴纳</label>
+						<label> 300</label>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="mui-content">
+			<div class="mui-content-padded">
+				<div class="chart" id="barChart"></div>
+			</div>
+			<div class="mui-content-padded">
+				<h5 style="text-align: center;font-size: 17px;color: #5CACEE;font-weight: bold;">详细信息 </h5>
+				<div class="row mui-input-group">
+					<div class="mui-input-row">
+						<label style="width:30%">险种</label>
+						<label style="width:23%">基数</label>
+						<label style="width:23%">单位</label>
+						<label style="width:24%">个人</label>
+					</div>
+					<div class="mui-input-row" onclick="xqrowClick(this)">
+						<label style="width:30%">公积金</label>
+						<label style="width:23%">2000</label>
+						<label style="width:23%">300</label>
+						<label style="width:24%">300</label>
+					</div>
+					<div class="mui-input-row" onclick="xqrowClick(this)">
+						<label style="width:30%">工伤</label>
+						<label style="width:23%">1500</label>
+						<label style="width:23%">280</label>
+						<label style="width:24%">0</label>
+					</div>
+					<div class="mui-input-row" onclick="xqrowClick(this)">
+						<label style="width:30%">医疗</label>
+						<label style="width:23%">2800</label>
+						<label style="width:23%">650</label>
+						<label style="width:24%">300</label>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="js/echarts.common.min.js"></script>
+		<script src="js/mui.min.js"></script>
+		<script src="js/jquery.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			$(".layer .mui-input-row").eq(0).nextAll().remove();   //第一次打开弹窗先清除静态写死的弹窗内容
+			var option = {
+				tooltip: {
+					trigger: 'axis',
+					axisPointer: {
+						type: 'shadow'
+					}
+				},
+				legend: {
+					data: ['单位缴纳', '个人缴纳']
+				},
+				grid: {
+					top: '14%',
+					left: '3%',
+					right: '4%',
+					bottom: '6%',
+					containLabel: true
+				},
+				xAxis: [{
+					type: 'category',
+					data: ['工伤', '公积金', '失业', '养老', '养老补退', '医疗'],
+					splitLine: {
+						show: true,
+						lineStyle: {
+							color: '#eee',
+							type: 'solid',
+							width: 1
+						}
+					},
+					axisLine: {
+						show: true,
+						lineStyle: {
+							color: '#d8d8d8',
+							width: 1,
+							type: 'solid'
+						}
+					},
+					axisTick: {
+						show: true,
+						length: 0,
+					},
+					axisLabel: {
+						show: true,
+						interval: 0,
+						rotate: 25,
+						textStyle: {
+							color: '#999',
+							fontFamily: '微软雅黑',
+							fontSize: 12,
+						}
+					}
+				}],
+				yAxis: [{
+					type: 'value',
+					splitLine: {
+						show: true,
+						lineStyle: {
+							color: '#eee',
+							type: 'solid',
+							width: 1
+						}
+					},
+					axisLine: {
+						show: true,
+						lineStyle: {
+							color: '#d8d8d8',
+							width: 1,
+							type: 'solid'
+						}
+					},
+					axisTick: {
+						show: true,
+						length: 15,
+						lineStyle: {
+							color: '#eee',
+							type: 'solid',
+							width: 1
+						}
+					},
+					axisLabel: {
+						formatter: '{value}',
+						margin: 24,
+						textStyle: {
+							color: '#999',
+							fontFamily: '微软雅黑',
+							fontSize: 12,
+						}
+					}
+				}],
+				series: [{
+					name: '单位缴纳',
+					type: 'bar',
+					stack: '缴纳',
+					data: [16.00, 500.00, 11.00, 750.00, 1000.00, 380.00],
+					itemStyle: {
+						normal: {
+							color: '#fc7879'
+						}
+					}
+				}, {
+					name: '个人缴纳',
+					type: 'bar',
+					stack: '缴纳',
+					data: [0, 500, 113, 350, 0, 100],
+					itemStyle: {
+						normal: {
+							color: '#38bdfe'
+						}
+					}
+				}]
+			};
+			myChart = echarts.init(document.getElementById('barChart'));
+			myChart.setOption(option);
+			
+			function xqrowClick(self) {
+                $(".layer").fadeIn(300);
+                var sblx = $(self).find("label").eq(0).text();  //社保类型
+                var jnjs = $(self).find("label").eq(1).text();  //基数
+                var dwjn = $(self).find("label").eq(2).text();  //单位缴纳
+                var grjn = $(self).find("label").eq(3).text();  //个人缴纳
+                $(".popTop").text(sblx);
+                switch(sblx){
+                	case '公积金':
+                	$(".popTop").css("background-image","url(images/gjj.png)"); 
+                	break;
+                	case '工伤':
+                	$(".popTop").css("background-image","url(images/gsbx.png)"); 
+                	break;
+                	case '医疗':
+                	$(".popTop").css("background-image","url(images/ylbx.png)"); 
+                	break;
+                }
+                var html = "<div class='mui-input-row'>"
+						+"<label> 基数</label>"
+						+"<label> "+jnjs+"</label>"
+						+"</div>"
+						+"<div class='mui-input-row'>"
+						+"<label> 单位缴纳</label>"
+						+"<label> "+dwjn+"</label>"
+						+"</div>"
+						+"<div class='mui-input-row'>"
+						+"<label> 个人缴纳</label>"
+						+"<label> "+grjn+"</label>"
+						+"</div>";
+				$(".layer .row").append(html);
+            }
+			$(".cross").click(function() {
+                $(".layer").fadeOut(300);
+                $(".layer .mui-input-row").eq(0).nextAll().remove();
+            });
+		</script>
+	</body>
+
+</html>
